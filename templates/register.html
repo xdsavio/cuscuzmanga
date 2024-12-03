@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('static/images/wallpaper.png'); /* Substitua pelo caminho da sua imagem */
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="email"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .success-message {
+            color: green;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .form-container a {
+            text-align: center;
+            display: block;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .form-container a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Cadastro</h1>
+        <form action="/register" method="POST">
+            <label for="username">Usuário:</label>
+            <input type="text" id="username" name="username" placeholder="Digite seu nome de usuário" required>
+            
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
+
+            <label for="confirm_password">Confirme a Senha:</label>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirme sua senha" required>
+
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required>
+
+            <!-- Exemplo de exibição de mensagens de erro ou sucesso -->
+            <!-- <div class="error-message">Mensagem de erro aqui</div> -->
+            <!-- <div class="success-message">Cadastro realizado com sucesso!</div> -->
+
+            <button type="submit">Cadastrar</button>
+        </form>
+        <a href="/login">Já tem uma conta? Faça login</a>
+    </div>
+</body>
+</html>

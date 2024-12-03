@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Mangá</title>
+</head>
+<body>
+    <h1>Editar Mangá</h1>
+    <form action="{{ url_for('edit_manga', manga_id=manga.id) }}" method="POST" enctype="multipart/form-data">
+        <label for="title">Título do Mangá:</label>
+        <select name="title" id="title">
+            {% for title in predefined_titles %}
+                <option value="{{ title }}" {% if title == manga.title %} selected {% endif %}>{{ title }}</option>
+            {% endfor %}
+        </select>
+        <br>
+
+        <label for="volume">Volume:</label>
+        <input type="number" id="volume" name="volume" min="0" max="999" value="{{ manga.volume }}" required>
+        <br>
+
+        <label for="image">Imagem:</label>
+        <input type="file" id="image" name="image">
+        {% if manga.image_filename %}
+            <br>
+            <img src="{{ url_for('static', filename='uploads/' + manga.image_filename) }}" alt="Imagem do Mangá" width="100">
+        {% endif %}
+        <br>
+
+        <button type="submit">Salvar Alterações</button>
+    </form>
+</body>
+</html>

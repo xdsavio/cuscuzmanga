@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('static/images/wallpaper.png') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        form {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"], input[type="password"], button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        a {
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bem-vindo à Biblioteca de Mangás</h1>
+    <form action="/login" method="POST">
+        <label for="username">Usuário:</label>
+        <input type="text" id="username" name="username" placeholder="Digite seu nome de usuário" required>
+        
+        <label for="password">Senha:</label>
+        <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
+        
+        <button type="submit">Entrar</button>
+    </form>
+    
+    <p>Não tem conta? <a href="/register">Cadastrar-se aqui</a></p>
+</body>
+</html>

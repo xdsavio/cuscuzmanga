@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Biblioteca</title>
+</head>
+<body>
+    <h1>Sua Biblioteca de Mangás</h1>
+    <form action="/library" method="POST">
+        <label for="name_filter">Filtrar por Nome:</label>
+        <input type="text" id="name_filter" name="name_filter">
+        
+        <label for="stars_filter">Filtrar por Estrelas:</label>
+        <input type="number" id="stars_filter" name="stars_filter" min="0" max="5">
+        
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <ul>
+        {% for manga in mangas %}
+        <li>
+            <strong>{{ manga.title }}</strong> - Volume: {{ manga.volume }} - Estrelas: {{ manga.stars }}
+            {% if manga.image_filename %}
+            <br>
+            <img src="{{ url_for('static', filename='uploads/' + manga.image_filename) }}" alt="Imagem do manga" style="max-width: 200px;">
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    
+    <h2>Adicionar Novo Mangá</h2>
+    <form action="/add_manga" method="POST" enctype="multipart/form-data">
+        <label for="title">Título:</label>
+        <input type="text" id="title" name="title" required>
+        
+        <label for="volume">Volume:</label>
+        <input type="number" id="volume" name="volume" required>
+        
+        <label for="stars">Estrelas (0-5):</label>
+        <input type="number" id="stars" name="stars" min="0" max="5" required>
+        
+        <label for="image">Imagem:</label>
+        <input type="file" id="image" name="image" accept="image/*">
+        
+        <button type="submit">Adicionar</button>
+    </form>
+</body>
+</html>
