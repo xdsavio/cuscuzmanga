@@ -1,214 +1,56 @@
-import os
-import smtplib
-import base64
-import pickle
-from werkzeug.utils import secure_filename
-from werkzeug.security import generate_password_hash, check_password_hash
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from flask import Flask, render_template, request, redirect, url_for, session, flash
-from flask_sqlalchemy import SQLAlchemy
-import re
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
 
-# Configuração do Flask
-app = Flask(__name__)
-app.secret_key = "sua_chave_secreta_aqui"  # Alterar para algo seguro
+.container {
+    width: 400px;
+    margin: 100px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-# Configuração do banco de dados SQLite
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///biblioteca.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
 
-# Defina a pasta onde as imagens serão armazenadas
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
-app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
+label {
+    font-size: 14px;
+    margin-bottom: 8px;
+    display: block;
+}
 
-# Verificar se o diretório de uploads existe, caso contrário, criá-lo
-if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
 
-# Função para verificar a extensão do arquivo
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
 
-# Função para validar o nome de usuário
-def validar_usuario(usuario):
-    if not re.match("^[a-z0-9]{8,}$", usuario):
-        return False
-    return True
+button:hover {
+    background-color: #0056b3;
+}
 
-# Função para validar a senha
-def validar_senha(senha):
-    if len(senha) < 8:
-        return False
-    return True
-
-# Função para enviar o e-mail usando a API Gmail e OAuth 2.0
-SCOPES = ['https://www.googleapis.com/auth/gmail.send']
-CREDENTIALS_FILE = 'config/credentials.json'  # Caminho para seu arquivo de credenciais
-
-def send_confirmation_email(user_email):
-    creds = None
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
-
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                CREDENTIALS_FILE, SCOPES)
-            creds = flow.run_local_server(port=0)
-
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
-
-    try:
-        service = build('gmail', 'v1', credentials=creds)
-        message = MIMEMultipart()
-        message['to'] = user_email
-        message['subject'] = 'Cadastro Realizado com Sucesso!'
-        msg = MIMEText('Olá, seu cadastro foi realizado com sucesso em nossa biblioteca de mangás.')
-        message.attach(msg)
-
-        raw_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
-        message = service.users().messages().send(userId="me", body={'raw': raw_message}).execute()
-        print(f"E-mail enviado com sucesso! Message Id: {message['id']}")
-    except Exception as error:
-        print(f"Ocorreu um erro: {error}")
-
-# Modelo do Usuário
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-
-# Modelo Manga
-class Manga(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), nullable=False)
-    volume = db.Column(db.Integer, nullable=False)
-    stars = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    image_filename = db.Column(db.String(200), nullable=True)
-
-# Criação do banco de dados
-with app.app_context():
-    db.create_all()
-
-# Rotas
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-@app.route("/login", methods=["POST"])
-def login():
-    username = request.form["username"]
-    password = request.form["password"]
-    user = User.query.filter_by(username=username).first()
-    
-    if user and check_password_hash(user.password, password):
-        session["user_id"] = user.id
-        return redirect(url_for("library"))
-    else:
-        error_message = "Usuário ou senha inválidos."
-        return render_template("index.html", error_message=error_message)
-
-@app.route("/register", methods=["POST"])
-def register():
-    username = request.form["username"]
-    password = request.form["password"]
-    confirm_password = request.form["confirm_password"]
-    email = request.form["email"]
-
-    if not validar_usuario(username):
-        flash("O nome de usuário deve ter pelo menos 8 caracteres e conter apenas letras minúsculas e números.")
-        return redirect(url_for("home"))
-
-    if User.query.filter_by(username=username).first():
-        flash("Usuário já existe!")
-        return redirect(url_for("home"))
-
-    if not validar_senha(password):
-        flash("A senha deve ter pelo menos 8 caracteres.")
-        return redirect(url_for("home"))
-
-    if password != confirm_password:
-        flash("As senhas não coincidem.")
-        return redirect(url_for("home"))
-
-    if User.query.filter_by(email=email).first():
-        flash("E-mail já cadastrado!")
-        return redirect(url_for("home"))
-
-    hashed_password = generate_password_hash(password)
-
-    new_user = User(username=username, password=hashed_password, email=email)
-    db.session.add(new_user)
-    db.session.commit()
-
-    flash("Cadastro realizado com sucesso!")
-    send_confirmation_email(email)
-    return redirect(url_for("home"))
-
-@app.route("/library", methods=["GET", "POST"])
-def library():
-    if "user_id" not in session:
-        return redirect(url_for("home"))
-    
-    user_id = session["user_id"]
-
-    name_filter = request.form.get("name_filter", "")
-    stars_filter = request.form.get("stars_filter", "")
-
-    mangas = Manga.query.filter(Manga.user_id == user_id)
-
-    if name_filter:
-        mangas = mangas.filter(Manga.title.contains(name_filter))
-
-    if stars_filter.isdigit():
-        mangas = mangas.filter(Manga.stars == int(stars_filter))
-
-    mangas = mangas.all()
-    return render_template("library.html", mangas=mangas)
-
-@app.route("/add_manga", methods=["POST"])
-def add_manga():
-    if "user_id" not in session:
-        return redirect(url_for("home"))
-    
-    title = request.form["title"]
-    volume = request.form["volume"]
-    stars = request.form["stars"]
-    user_id = session["user_id"]
-
-    if not volume.isdigit() or not (0 <= int(volume) <= 999):
-        return "O volume deve ser um número entre 0 e 999.", 400
-
-    if not stars.isdigit() or not (0 <= int(stars) <= 5):
-        return "A classificação deve ser um número entre 0 e 5.", 400
-
-    volume = int(volume)
-    stars = int(stars)
-
-    image = request.files.get("image")
-    image_filename = None
-    if image and allowed_file(image.filename):
-        image_filename = secure_filename(image.filename)
-        image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
-        image.save(image_path)
-
-    new_manga = Manga(title=title, volume=volume, stars=stars, user_id=user_id, image_filename=image_filename)
-    db.session.add(new_manga)
-    db.session.commit()
-
-    return redirect(url_for("library"))
-
-if __name__ == "__main__":
-    app.run(debug=True)
+.flash-messages {
+    color: red;
+    list-style-type: none;
+    padding: 0;
+}

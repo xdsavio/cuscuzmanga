@@ -1,49 +1,143 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minha Biblioteca</title>
+    <title>Biblioteca de Mangás</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f7f7f7;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin-top: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .profile {
+            text-align: right;
+        }
+        .profile img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+        .profile p {
+            margin: 5px 0;
+        }
+        .profile a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .profile a:hover {
+            text-decoration: underline;
+        }
+        .filters {
+            margin-top: 20px;
+        }
+        .filters label {
+            margin-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        button {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <h1>Sua Biblioteca de Mangás</h1>
-    <form action="/library" method="POST">
-        <label for="name_filter">Filtrar por Nome:</label>
-        <input type="text" id="name_filter" name="name_filter">
-        
-        <label for="stars_filter">Filtrar por Estrelas:</label>
-        <input type="number" id="stars_filter" name="stars_filter" min="0" max="5">
-        
-        <button type="submit">Filtrar</button>
-    </form>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Bem-vindo, {{ user.name }}</h1>
+            </div>
+            <div class="profile">
+                <img src="{{ url_for('static', filename='uploads/' + user.profile_image) }}" alt="Foto de Perfil">
+                <p>{{ user.name }}</p>
+                <p>Mangás: {{ user.mangas_count }}</p>
+                <a href="{{ url_for('edit_profile') }}">Editar Perfil</a>
+            </div>
+        </div>
 
-    <ul>
-        {% for manga in mangas %}
-        <li>
-            <strong>{{ manga.title }}</strong> - Volume: {{ manga.volume }} - Estrelas: {{ manga.stars }}
-            {% if manga.image_filename %}
-            <br>
-            <img src="{{ url_for('static', filename='uploads/' + manga.image_filename) }}" alt="Imagem do manga" style="max-width: 200px;">
-            {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
-    
-    <h2>Adicionar Novo Mangá</h2>
-    <form action="/add_manga" method="POST" enctype="multipart/form-data">
-        <label for="title">Título:</label>
-        <input type="text" id="title" name="title" required>
+        <!-- Filtros -->
+        <div class="filters">
+            <form method="POST">
+                <label for="name_filter">Filtro por título:</label>
+                <input type="text" id="name_filter" name="name_filter">
+                
+                <label for="stars_filter">Filtro por estrelas:</label>
+                <input type="number" id="stars_filter" name="stars_filter" min="0" max="5">
+                
+                <button type="submit">Filtrar</button>
+            </form>
+        </div>
         
-        <label for="volume">Volume:</label>
-        <input type="number" id="volume" name="volume" required>
+        <h2>Meus Mangás</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Volume</th>
+                    <th>Classificação</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for manga in mangas %}
+                    <tr>
+                        <td>{{ manga.title }}</td>
+                        <td>{{ manga.volume }}</td>
+                        <td>{{ manga.stars }}</td>
+                        <td>
+                            <form action="{{ url_for('delete_manga', manga_id=manga.id) }}" method="POST">
+                                <button type="submit">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4">Nenhum mangá encontrado.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         
-        <label for="stars">Estrelas (0-5):</label>
-        <input type="number" id="stars" name="stars" min="0" max="5" required>
-        
-        <label for="image">Imagem:</label>
-        <input type="file" id="image" name="image" accept="image/*">
-        
-        <button type="submit">Adicionar</button>
-    </form>
+        <a href="{{ url_for('add_manga') }}">Adicionar Novo Mangá</a>
+        <br>
+        <a href="{{ url_for('home') }}">Voltar à página inicial</a>
+    </div>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Pergunta de segurança</title>
     <style>
         * {
             margin: 0;
@@ -58,8 +58,7 @@
             margin: 10px 0 5px;
         }
 
-        input[type="text"],
-        input[type="password"] {
+        input[type="text"] {
             width: 100%;
             padding: 12px;
             margin-bottom: 20px;
@@ -69,8 +68,7 @@
             color: #333;
         }
 
-        input[type="text"]:focus,
-        input[type="password"]:focus {
+        input[type="text"]:focus {
             border-color: #4CAF50;
             outline: none;
         }
@@ -110,18 +108,14 @@
 <body>
     <div class="overlay"></div>
     <div class="form-container">
-        <h1>Bem-vindo à Biblioteca de Mangás</h1>
-        <form action="/login" method="POST">
-            <label for="username">Usuário:</label>
-            <input type="text" id="username" name="username" placeholder="Digite seu nome de usuário" required>
+        <h1>Pergunta de segurança</h1>
+        <form action="/security_question" method="POST">
+            <label>{{ security_question }}</label>
+            <input type="text" name="security_answer" placeholder="Digite sua resposta" required>
             
-            <label for="password">Senha:</label>
-            <input type="password" id="password" name="password" placeholder="Digite sua senha" required minlength="6">
-            
-            <button type="submit">Entrar</button>
+            <button type="submit">Responder</button>
         </form>
-        <p>Não tem conta? <a href="/register">Cadastrar-se aqui</a></p>
-        <p>Esqueceu sua senha? <a href="/forgot_password">Recuperar senha</a></p>
+        <p>Voltar para <a href="/login">Login</a></p>
     </div>
 </body>
 </html>
