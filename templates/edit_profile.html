@@ -2,7 +2,6 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Perfil</title>
     <style>
@@ -14,48 +13,39 @@
         }
         .container {
             width: 80%;
-            max-width: 1200px;
-            margin-top: 20px;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
         }
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
+            text-align: center;
+            margin-bottom: 20px;
         }
         .header h1 {
-            margin: 0;
-        }
-        form {
-            margin-top: 20px;
+            font-size: 2em;
+            color: #4CAF50;
         }
         label {
-            display: block;
+            font-weight: bold;
             margin-bottom: 8px;
         }
         input, button {
-            padding: 8px;
-            margin-bottom: 10px;
             width: 100%;
-            max-width: 500px;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
         }
         button {
             background-color: #4CAF50;
             color: white;
-            border: none;
-            border-radius: 5px;
             cursor: pointer;
         }
         button:hover {
             background-color: #45a049;
-        }
-        img {
-            border-radius: 50%;
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
         }
     </style>
 </head>
@@ -64,20 +54,19 @@
         <div class="header">
             <h1>Editar Perfil</h1>
         </div>
-        
         <form action="{{ url_for('edit_profile') }}" method="POST" enctype="multipart/form-data">
-            <label for="name">Nome:</label>
-            <input type="text" id="name" name="name" value="{{ user.name }}" required>
-            
-            <label for="image">Imagem de Perfil:</label>
-            <input type="file" id="image" name="image">
-            
-            {% if user.profile_image %}
-                <br>
-                <img src="{{ url_for('static', filename='uploads/' + user.profile_image) }}" alt="Imagem de Perfil">
-            {% endif %}
-            
-            <br>
+            <label for="username">Nome de Usuário</label>
+            <input type="text" id="username" name="username" value="{{ user.username }}" required>
+
+            <label for="new_password">Nova Senha</label>
+            <input type="password" id="new_password" name="new_password">
+
+            <label for="confirm_password">Confirmar Senha</label>
+            <input type="password" id="confirm_password" name="confirm_password">
+
+            <label for="profile_image">Imagem de Perfil</label>
+            <input type="file" id="profile_image" name="profile_image">
+
             <button type="submit">Salvar Alterações</button>
         </form>
     </div>
