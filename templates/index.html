@@ -111,7 +111,8 @@
     <div class="overlay"></div>
     <div class="form-container">
         <h1>Cuscuz com Mangá</h1>
-        <form action="/login" method="POST">
+        <!-- Corrigido o form action para redirecionar para a rota login -->
+        <form action="{{ url_for('login') }}" method="POST">
             <label for="username">Usuário:</label>
             <input type="text" id="username" name="username" placeholder="Digite seu nome de usuário" required>
             
@@ -120,8 +121,8 @@
             
             <button type="submit">Entrar</button>
         </form>
-        <p>Não tem conta? <a href="/register">Cadastrar-se aqui</a></p>
-        <p>Esqueceu sua senha? <a href="/forgot_password">Recuperar senha</a></p>
+        <p>Não tem conta? <a href="{{ url_for('register') }}">Cadastrar-se aqui</a></p>
+        <p>Esqueceu sua senha? <a href="{{ url_for('forgot_password') }}">Recuperar senha</a></p>  <!-- Link corrigido -->
     </div>
 </body>
 </html>

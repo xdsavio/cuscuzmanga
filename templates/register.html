@@ -132,6 +132,11 @@
         {% endwith %}
 
         <form action="/register" method="POST">
+
+            <label for="name">Nome:</label>
+            <input type="text" id="name" name="name" placeholder="Digite seu nome" required>
+            
+
             <label for="username">Usuário:</label>
             <input type="text" id="username" name="username" placeholder="Escolha um nome de usuário" required value="{{ request.form.get('username', '') }}">
             

@@ -114,12 +114,39 @@
             width: 300px;
             max-width: 100%;
         }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 30px;
+            background-color: #333;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+        .navbar a:hover {
+            background-color: #e60000;
+        }
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <a href="{{ url_for('home') }}">Início</a>
+        <a href="{{ url_for('library') }}">Minha Biblioteca</a>
+        <a href="{{ url_for('friends') }}">Amigos</a>
+    </div>
+
     <div class="container">
         <div class="header">
-            <h1>Bem-vindo, {{ user.username }}</h1>
+            <h1>Bem-vindo, {{ user.name }}</h1> <!-- Mostra o nome do usuário -->
             <div class="profile">
                 <img src="{{ url_for('static', filename='images/' + (user.profile_image if user.profile_image else 'default_profile.jpg')) }}" alt="Foto de Perfil">
                 <p>{{ user.username }}</p>
@@ -180,6 +207,8 @@
         <div class="footer">
             <a href="{{ url_for('add_manga') }}">
                 <button style="margin-top: 20px;">Adicionar Novo Mangá</button>
+            </a>
+           
             </a>
             <a href="{{ url_for('logout') }}">
                 <button>Logout</button>

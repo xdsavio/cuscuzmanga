@@ -39,6 +39,10 @@
             border-radius: 5px;
             border: 1px solid #ddd;
         }
+        input[readonly] {
+            background-color: #e0e0e0;
+            cursor: not-allowed;
+        }
         button {
             background-color: #4CAF50;
             color: white;
@@ -55,8 +59,11 @@
             <h1>Editar Perfil</h1>
         </div>
         <form action="{{ url_for('edit_profile') }}" method="POST" enctype="multipart/form-data">
-            <label for="username">Nome de Usuário</label>
-            <input type="text" id="username" name="username" value="{{ user.username }}" required>
+            <label for="username">Nome de Usuário (fixo)</label>
+            <input type="text" id="username" name="username" value="{{ user.username }}" readonly>
+
+            <label for="name">Nome</label>
+            <input type="text" id="name" name="name" value="{{ user.name }}" required>
 
             <label for="new_password">Nova Senha</label>
             <input type="password" id="new_password" name="new_password">

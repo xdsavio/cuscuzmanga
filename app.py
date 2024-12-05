@@ -62,11 +62,13 @@ def validar_senha(senha):
 # Modelos do banco de dados
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)  # Nome do usuário
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     security_question = db.Column(db.String(200), nullable=False)
     security_answer = db.Column(db.String(200), nullable=False)
     profile_image = db.Column(db.String(200), nullable=True)
+
 
 class Manga(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -99,16 +101,27 @@ def login():
         
         if user and check_password_hash(user.password, password):
             session["user_id"] = user.id
-            return redirect(url_for("library"))
+            return redirect(url_for("main_home"))  # Redireciona para o main_home após login
         else:
             flash("Usuário ou senha inválidos.")
-            return redirect(url_for("home"))
+            return redirect(url_for("home"))  # Retorna para a página inicial em caso de falha
     
     return render_template("index.html")
+
+@app.route("/main_home")
+def main_home():
+    # Este é o redirecionamento correto após o login
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('home'))  # Redireciona se o usuário não estiver logado
+
+    user = User.query.get(user_id)
+    return render_template("main_home.html", user=user)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
+        name = request.form["name"]  # Nome do usuário
         username = request.form["username"]
         password = request.form["password"]
         confirm_password = request.form["confirm_password"]
@@ -132,8 +145,13 @@ def register():
             return render_template("register.html")
 
         hashed_password = generate_password_hash(password)
-        new_user = User(username=username, password=hashed_password, 
-                        security_question=security_question, security_answer=security_answer)
+        new_user = User(
+            name=name,  # Armazena o nome
+            username=username,
+            password=hashed_password, 
+            security_question=security_question, 
+            security_answer=security_answer
+        )
         db.session.add(new_user)
         db.session.commit()
 
@@ -193,6 +211,30 @@ def add_manga():
         return redirect(url_for("library"))
 
     return render_template("add_manga.html", manga=None, manga_titles=manga_titles)
+
+@app.route("/friends")
+def friends():
+    if "user_id" not in session:
+        return redirect(url_for("home"))
+    
+    current_user = User.query.get(session["user_id"])
+    users = User.query.filter(User.id != session["user_id"]).all()
+
+    return render_template("friends.html", users=users, current_user=current_user)
+
+@app.route("/user/<int:user_id>")
+def view_user(user_id):
+    if "user_id" not in session:
+        return redirect(url_for("home"))
+    
+    user = User.query.get(user_id)
+    if not user:
+        flash("Usuário não encontrado.")
+        return redirect(url_for("friends"))
+
+    mangas = Manga.query.filter_by(user_id=user_id).all()
+
+    return render_template("user_profile.html", user=user, mangas=mangas)
 
 @app.route("/edit_manga/<int:manga_id>", methods=["GET", "POST"])
 def edit_manga(manga_id):
@@ -270,6 +312,19 @@ def edit_profile():
 
     return render_template("edit_profile.html", user=user)
 
+@app.route("/forgot_password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        username = request.form["username"]
+        user = User.query.filter_by(username=username).first()
+        
+        if user:
+            flash(f"Instruções de recuperação de senha enviadas para o e-mail associado ao usuário {username}.")
+        else:
+            flash("Usuário não encontrado.")
+        return redirect(url_for("home"))
+    
+    return render_template("forgot_password.html")
 
 @app.route("/logout")
 def logout():

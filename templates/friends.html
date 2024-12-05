@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amigos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            padding: 20px;
+        }
+        .header {
+            background-color: #e60000;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .header a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+        .users {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .user-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .user-card img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+        .user-card h3 {
+            margin: 10px 0;
+        }
+        .user-card a {
+            color: #e60000;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .user-card a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Amigos</h1>
+            <nav>
+                <a href="{{ url_for('home') }}">Início</a>
+                <a href="{{ url_for('library') }}">Minha Biblioteca</a>
+                <a href="{{ url_for('friends') }}">Amigos</a>
+            </nav>
+        </div>
+        <div class="users">
+            {% for user in users %}
+                <div class="user-card">
+                    <img src="{{ url_for('static', filename='images/' + (user.profile_image if user.profile_image else 'default_profile.jpg')) }}" alt="Foto de Perfil">
+                    <h3>{{ user.name }}</h3>
+                    <a href="{{ url_for('view_user', user_id=user.id) }}">Ver Perfil</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

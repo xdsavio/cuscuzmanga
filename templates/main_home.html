@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Início</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            padding: 20px;
+        }
+        .header {
+            background-color: #e60000;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .header a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+        h1 {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Bem-vindo, {{ user.name }}</h1>
+            <nav>
+                <a href="{{ url_for('main_home') }}">Início</a>
+                <a href="{{ url_for('library') }}">Minha Biblioteca</a>
+                <a href="{{ url_for('friends') }}">Amigos</a>
+            </nav>
+        </div>
+        <h2>Escolha uma das opções acima para começar!</h2>
+    </div>
+</body>
+</html>
